@@ -59,7 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64, x86 ]
+        arch: [AMD64, x86 ]
         python_version: ['cp37-*', 'cp38-*', 'cp39-*', 'cp310-*']
 
     steps:
