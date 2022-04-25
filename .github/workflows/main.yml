@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       with:
-        fetch-depth: 0  # Optional, use if you use setuptools_scm
+        # fetch-depth: 0  # Optional, use if you use setuptools_scm
         submodules: recursive  # Optional, use if you have submodules
 
     - name: Update COPASI Version
