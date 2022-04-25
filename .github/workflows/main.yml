@@ -41,7 +41,7 @@ jobs:
       env:
           CIBW_BUILD: ${{ matrix.python_version }}
           CIBW_ARCHS_MACOS: x86_64 arm64
-          CIBW_ENVIRONMENT: COPASI_SRC_DIR=./copasi_source COPASI_DEP_DIR=./copasi-dependencies
+          CIBW_ENVIRONMENT: COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies
           CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja
 
     - name: Upload wheels
