@@ -23,7 +23,7 @@ jobs:
         submodules: recursive  # Optional, use if you have submodules
         
     - name: Add msbuild to PATH (Windows)
-      if: matrix.platform == 'windows-2019'
+      if: matrix.os == 'windows-2019'
       uses: ilammy/msvc-dev-cmd@v1.6.0
     
     - uses: seanmiddleditch/gha-setup-ninja@master
