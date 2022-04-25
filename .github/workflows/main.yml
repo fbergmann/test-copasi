@@ -24,7 +24,7 @@ jobs:
 
     - name: restore HEAD
       shell: bash
-      run: git submodule update --remote --merge
+      run: git submodule update --init --recursive --remote --merge
 
     - name: Update COPASI Version
       shell: bash
