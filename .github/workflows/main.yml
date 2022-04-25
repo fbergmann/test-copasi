@@ -17,10 +17,14 @@ jobs:
         python_version: ['cp37-*', 'cp38-*', 'cp39-*', 'cp310-*']
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
       with:
-        # fetch-depth: 0  # Optional, use if you use setuptools_scm
+        fetch-depth: 0  # Optional, use if you use setuptools_scm
         submodules: recursive  # Optional, use if you have submodules
+
+    - name: restore HEAD
+      shell: bash
+      run: git submodule update --remote --rebase
 
     - name: Update COPASI Version
       shell: bash
@@ -35,7 +39,8 @@ jobs:
       env:
           CIBW_BUILD: ${{ matrix.python_version }}
           CIBW_ARCHS_MACOS: x86_64 arm64
-          CIBW_ENVIRONMENT: COPASI_SRC_DIR=./copasi_source COPASI_DEP_DIR=./copasi-dependencies CMAKE_GENERATOR=Ninja
+          CIBW_ENVIRONMENT: COPASI_SRC_DIR=./copasi_source COPASI_DEP_DIR=./copasi-dependencies
+          CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja
 
     - name: Upload wheels
       uses: actions/upload-artifact@v2
