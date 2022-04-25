@@ -43,12 +43,13 @@ jobs:
       run: |
         cp copasi_source/copasi/bindings/python/setup.py .
 
-    - uses: pypa/cibuildwheel@v2.3.1
+    - uses: pypa/cibuildwheel@v2.4.0
       env:
           CIBW_BUILD: ${{ matrix.python_version }}
+          CIBW_BUILD_FRONTEND: "build"
           CIBW_ARCHS_MACOS: x86_64 arm64
           CIBW_ENVIRONMENT: COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies
-          #CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=\"NMake Makefiles\" COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies 
+          CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies 
           CIBW_BEFORE_BUILD_LINUX: scripts/install_uuid.sh
           CIBW_SKIP: "*-musllinux*"
 
