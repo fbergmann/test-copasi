@@ -84,7 +84,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
       run: |
-        git checkout release/Version-4.36
+        git checkout release/Version-4.37
 
     - name: Update COPASI Version
       shell: bash
