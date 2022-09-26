@@ -31,7 +31,7 @@ jobs:
         git checkout release/Version-4.37
 
     - name: Install gawk on mac
-      if: ${{ matrix.os }} == 'macos-11'
+      if: matrix.os == 'macos-11'
       shell: bash
       run: brew install gawk
 
