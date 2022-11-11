@@ -9,7 +9,7 @@ on:
 jobs:
   build_wheels:
     name: Wheel on ${{ matrix.os }} for ${{ matrix.python_version }}
-    runs-on: [self-hosted, linux, ARM64]
+    runs-on: [self-hosted, linux, X64]
     strategy:
       fail-fast: false
       matrix:
