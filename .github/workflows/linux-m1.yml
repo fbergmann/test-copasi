@@ -21,8 +21,6 @@ jobs:
         fetch-depth: 0  # Optional, use if you use setuptools_scm
         submodules: recursive  # Optional, use if you have submodules
     
-    - uses: seanmiddleditch/gha-setup-ninja@master
-    
     - name: restore HEAD
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
