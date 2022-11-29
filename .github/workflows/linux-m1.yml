@@ -31,7 +31,8 @@ jobs:
     - name: Run docker
       run: |
         mkdir wheelhouse
-        sudo docker run --rm -v `pwd`:/io quay.io/pypa/manylinux2014_aarch64 /home/ubuntu/build_pycopasi.sh
+        cp /home/ubuntu/build_pycopasi.sh . 
+        sudo docker run --rm -v `pwd`:/io quay.io/pypa/manylinux2014_aarch64 /io/build_pycopasi.sh
 
     - name: Upload wheels
       uses: actions/upload-artifact@v2
