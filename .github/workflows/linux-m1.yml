@@ -31,6 +31,7 @@ jobs:
     - name: Run docker
       run: |
         mkdir wheelhouse
+        cp /home/ubuntu/libuuid-1.0.3.tar.gz . 
         cp /home/ubuntu/build_pycopasi.sh . 
         sudo docker run --rm -v `pwd`:/io quay.io/pypa/manylinux2014_aarch64 /io/build_pycopasi.sh
 
