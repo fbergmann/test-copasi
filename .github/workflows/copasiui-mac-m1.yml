@@ -17,6 +17,8 @@ jobs:
         fetch-depth: 0  # Optional, use if you use setuptools_scm
         submodules: recursive  # Optional, use if you have submodules
 
+    - uses: fregante/setup-git-user@v1
+
     - name: restore HEAD
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
