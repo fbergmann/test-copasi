@@ -49,8 +49,8 @@ jobs:
         export BUILD_SYSTEM_HOME=$(realpath .)
         source build-system-arm/profile/darwin-arm
         # emerge
-        install-dependencies
-        release --nogit --branch release/Version-4.38 --comment stable --noscp
+        install-dependencies || echo "install dependencies failed"
+        release --nogit --branch release/Version-4.38 --comment stable --noscp || echo "release script failed"
 
     - name: Upload wheels
       uses: actions/upload-artifact@v2
