@@ -17,7 +17,8 @@ jobs:
         fetch-depth: 0  # Optional, use if you use setuptools_scm
         submodules: recursive  # Optional, use if you have submodules
 
-    - uses: fregante/setup-git-user@v1
+    - run: git config --local user.email "Actions User"
+    - run: git config --local user.name "actions@github.com"
 
     - name: restore HEAD
       shell: bash
