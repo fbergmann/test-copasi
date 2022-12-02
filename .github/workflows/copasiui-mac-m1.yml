@@ -32,8 +32,9 @@ jobs:
       shell: bash
       run: |
         git clone https://github.com/copasi/build-system build-system-arm
-        cd build-system-arm
+        pushd build-system-arm
         git checkout independent-from-home
+        popd
         
         mkdir build-system-arm/git
         ln -s copasi_source build-system-arm/git/COPASI.release
