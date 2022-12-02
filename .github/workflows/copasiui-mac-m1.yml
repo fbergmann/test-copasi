@@ -39,6 +39,7 @@ jobs:
         mkdir build-system-arm/git
         ln -s $(realpath .)/copasi_source build-system-arm/git/COPASI.release
         ln -s $(realpath .)/copasi-dependencies build-system-arm/git/copasi-dependencies
+        git config --global --add safe.directory $(realpath .)/copasi_source
 
     - name: Run build
       run: |
