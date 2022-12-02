@@ -32,9 +32,12 @@ jobs:
       shell: bash
       run: |
         git clone https://github.com/copasi/build-system build-system-arm
+        cd build-system-arm
+        git checkout independent-from-home
 
     - name: Run build
       run: |
+        export BUILD_SYSTEM_HOME=$(realpath .)
         source build-system-arm/profile/darwin-arm
         # emerge
         install-dependencies
