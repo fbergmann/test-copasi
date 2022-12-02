@@ -50,7 +50,7 @@ jobs:
         source build-system-arm/profile/darwin-arm
         # emerge
         install-dependencies
-        release --branch release/Version-4.38 --comment stable --noscp
+        release --nogit --branch release/Version-4.38 --comment stable --noscp
 
     - name: Upload wheels
       uses: actions/upload-artifact@v2
