@@ -56,6 +56,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: COPASI-arm
+        if-no-files-found: error
         path: |
             build-system-arm/packages/setup.release/*.dmg
             build-system-arm/packages/setup.release/*.gz
@@ -109,6 +110,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: COPASI-intel
+        if-no-files-found: error
         path: |
-            build-system-arm/packages/setup.release/*.dmg
-            build-system-arm/packages/setup.release/*.gz
+            build-system-intel/packages/setup.release/*.dmg
+            build-system-intel/packages/setup.release/*.gz
