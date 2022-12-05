@@ -148,8 +148,8 @@ jobs:
         popd
         
         mkdir build-system/git
-        ln -s $(realpath .)/copasi_source build-system-intel/git/COPASI.release
-        ln -s $(realpath .)/copasi-dependencies build-system-intel/git/copasi-dependencies
+        ln -s $(realpath .)/copasi_source build-system/git/COPASI.release
+        ln -s $(realpath .)/copasi-dependencies build-system/git/copasi-dependencies
         git config --global --add safe.directory $(realpath .)/copasi_source
 
     - name: Run build
