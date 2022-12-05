@@ -114,3 +114,57 @@ jobs:
         path: |
             build-system-intel/packages/setup.release/*.dmg
             build-system-intel/packages/setup.release/*.gz
+
+  build_linux_x64:
+    name: CopasiUI (Linux, intel)
+    runs-on: [self-hosted, Linux, X64]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Optional, use if you use setuptools_scm
+        submodules: recursive  # Optional, use if you have submodules
+
+    - run: git config --local user.email "Actions User"
+    - run: git config --local user.name "actions@github.com"
+
+    - name: restore HEAD
+      shell: bash
+      working-directory: ${{github.workspace}}/copasi_source
+      run: |
+        git checkout release/Version-4.38
+
+    - name: Update COPASI Version
+      shell: bash
+      working-directory: ${{github.workspace}}/copasi_source
+      run: ./gitTools/UpdateCopasiVersion --force
+
+    - name: get build tool script
+      shell: bash
+      run: |
+        git clone https://github.com/copasi/build-system build-system
+        pushd build-system
+        git checkout independent-from-home
+        popd
+        
+        mkdir build-system/git
+        ln -s $(realpath .)/copasi_source build-system-intel/git/COPASI.release
+        ln -s $(realpath .)/copasi-dependencies build-system-intel/git/copasi-dependencies
+        git config --global --add safe.directory $(realpath .)/copasi_source
+
+    - name: Run build
+      run: |
+        export BUILD_SYSTEM_HOME=$(realpath .)
+        source build-system/profile/linux-64
+        # emerge
+        install-dependencies || echo "install dependencies failed"
+        release --nogit --branch release/Version-4.38 --comment stable --noscp || echo "release script failed"
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v3
+      with:
+        name: COPASI-linux-64
+        if-no-files-found: error
+        path: |
+            build-system/packages/setup.release/*.sh
+            build-system/packages/setup.release/*.gz
