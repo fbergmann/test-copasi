@@ -1,4 +1,4 @@
-name: Build macOS M1 CopasiUI
+name: Build CopasiUI (macOS)
 
 on:
   workflow_dispatch:
