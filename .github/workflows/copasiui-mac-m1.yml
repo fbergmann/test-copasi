@@ -7,8 +7,8 @@ on:
     - published
     
 jobs:
-  build_gui:
-    name: Test building CopasiUI
+  build_macOS_arm:
+    name: CopasiUI (arm)
     runs-on: [self-hosted, macOS, ARM64]
 
     steps:
@@ -53,7 +53,62 @@ jobs:
         release --nogit --branch release/Version-4.38 --comment stable --noscp || echo "release script failed"
 
     - name: Upload wheels
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        path: build-system-arm/packages/setup.release/*.dmg
-        name: COPASI
+        name: COPASI-arm
+        path: |
+            build-system-arm/packages/setup.release/*.dmg
+            build-system-arm/packages/setup.release/*.gz
+
+  build_macOS_intel:
+    name: CopasiUI (intel)
+    runs-on: [self-hosted, macOS, X64]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Optional, use if you use setuptools_scm
+        submodules: recursive  # Optional, use if you have submodules
+
+    - run: git config --local user.email "Actions User"
+    - run: git config --local user.name "actions@github.com"
+
+    - name: restore HEAD
+      shell: bash
+      working-directory: ${{github.workspace}}/copasi_source
+      run: |
+        git checkout release/Version-4.38
+
+    - name: Update COPASI Version
+      shell: bash
+      working-directory: ${{github.workspace}}/copasi_source
+      run: ./gitTools/UpdateCopasiVersion --force
+
+    - name: get build tool script
+      shell: bash
+      run: |
+        git clone https://github.com/copasi/build-system build-system-intel
+        pushd build-system-intel
+        git checkout independent-from-home
+        popd
+        
+        mkdir build-system-intel/git
+        ln -s $(realpath .)/copasi_source build-system-intel/git/COPASI.release
+        ln -s $(realpath .)/copasi-dependencies build-system-intel/git/copasi-dependencies
+        git config --global --add safe.directory $(realpath .)/copasi_source
+
+    - name: Run build
+      run: |
+        export BUILD_SYSTEM_HOME=$(realpath .)
+        source build-system-intel/profile/darwin-intel
+        # emerge
+        install-dependencies || echo "install dependencies failed"
+        release --nogit --branch release/Version-4.38 --comment stable --noscp || echo "release script failed"
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v3
+      with:
+        name: COPASI-intel
+        path: |
+            build-system-arm/packages/setup.release/*.dmg
+            build-system-arm/packages/setup.release/*.gz
