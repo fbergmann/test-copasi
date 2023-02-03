@@ -28,7 +28,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
       run: |
-        git checkout release/Version-4.38
+        git checkout release/Version-4.39
 
     - name: Install gawk on mac
       if: matrix.os == 'macos-11'
@@ -84,7 +84,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
       run: |
-        git checkout release/Version-4.38
+        git checkout release/Version-4.39
 
     - name: Update COPASI Version
       shell: bash

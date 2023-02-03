@@ -24,7 +24,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
       run: |
-        git checkout release/Version-4.38
+        git checkout release/Version-4.39
 
     - name: Update COPASI Version
       shell: bash
@@ -50,7 +50,7 @@ jobs:
         source build-system-arm/profile/darwin-arm
         # emerge
         install-dependencies || echo "install dependencies failed"
-        release --nogit --branch release/Version-4.38 --comment stable --noscp || echo "release script failed"
+        release --nogit --branch release/Version-4.39 --comment stable --noscp || echo "release script failed"
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
@@ -78,7 +78,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
       run: |
-        git checkout release/Version-4.38
+        git checkout release/Version-4.39
 
     - name: Update COPASI Version
       shell: bash
@@ -104,7 +104,7 @@ jobs:
         source build-system-intel/profile/darwin-intel
         # emerge
         install-dependencies || echo "install dependencies failed"
-        release --nogit --branch release/Version-4.38 --comment stable --noscp || echo "release script failed"
+        release --nogit --branch release/Version-4.39 --comment stable --noscp || echo "release script failed"
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
@@ -132,7 +132,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
       run: |
-        git checkout release/Version-4.38
+        git checkout release/Version-4.39
 
     - name: Update COPASI Version
       shell: bash
@@ -158,7 +158,7 @@ jobs:
         source build-system/profile/linux-64
         # emerge
         install-dependencies || echo "install dependencies failed"
-        release --nogit --branch release/Version-4.38 --comment stable --noscp || echo "release script failed"
+        release --nogit --branch release/Version-4.39 --comment stable --noscp || echo "release script failed"
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
