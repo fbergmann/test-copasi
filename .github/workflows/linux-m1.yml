@@ -1,5 +1,8 @@
 name: Build M1 Linux Wheels
 
+env:
+  copasi_branch: release/Version-4.40
+
 on:
   workflow_dispatch:
   release:
@@ -21,7 +24,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/copasi_source
       run: |
-        git checkout release/Version-4.39
+        git checkout $copasi_branch
 
     - name: Update COPASI Version
       shell: bash

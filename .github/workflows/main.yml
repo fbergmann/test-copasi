@@ -1,5 +1,8 @@
 name: Build Wheels
 
+env:
+  copasi_branch: release/Version-4.40
+
 on:
   workflow_dispatch:
   release:
