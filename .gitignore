@@ -2,3 +2,8 @@ build*
 wheelhouse
 install*
 setup.py
+python_copasi.egg-info/dependency_links.txt
+python_copasi.egg-info/PKG-INFO
+python_copasi.egg-info/SOURCES.txt
+python_copasi.egg-info/top_level.txt
+libuuid-1.0.3.tar.gz
