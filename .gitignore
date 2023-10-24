@@ -8,3 +8,4 @@ python_copasi.egg-info/SOURCES.txt
 python_copasi.egg-info/top_level.txt
 libuuid-1.0.3.tar.gz
 /dist/
+.vscode/settings.json
