@@ -1,6 +1,7 @@
 build*
 wheelhouse
 install*
+python-copasi-*
 setup.py
 python_copasi.egg-info/dependency_links.txt
 python_copasi.egg-info/PKG-INFO
