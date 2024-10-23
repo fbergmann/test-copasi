@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-12]
-        python_version: ['cp39-*', 'cp310-*', 'cp311-*', 'cp312-*']
+        python_version: ['cp39-*', 'cp310-*', 'cp311-*', 'cp312-*', 'cp313-*']
 
     steps:
     - uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
       run: |
         cp copasi_source/copasi/bindings/python/setup.py .
 
-    - uses: pypa/cibuildwheel@v2.19.1
+    - uses: pypa/cibuildwheel@v2.21.3
       env:
           CIBW_BUILD: ${{ matrix.python_version }}
           CIBW_ARCHS_MACOS: x86_64 arm64
@@ -68,7 +68,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [AMD64, x86 ]
-        python_version: ['cp39-*', 'cp310-*', 'cp311-*', 'cp312-*']
+        python_version: ['cp39-*', 'cp310-*', 'cp311-*', 'cp312-*', 'cp313-*']
 
     steps:
     - uses: actions/checkout@v4
@@ -98,7 +98,7 @@ jobs:
       run: |
         cp copasi_source/copasi/bindings/python/setup.py .
 
-    - uses: pypa/cibuildwheel@v2.19.1
+    - uses: pypa/cibuildwheel@v2.21.3
       env:
           CIBW_BUILD: ${{ matrix.python_version }}
           CIBW_ARCHS: ${{ matrix.arch }}
