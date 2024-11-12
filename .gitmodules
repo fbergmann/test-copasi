@@ -1,7 +1,7 @@
 [submodule "copasi_source"]
 	path = copasi_source
 	url = https://github.com/COPASI/COPASI
-  branch = release/Version-4.44
+  branch = release/Version-4.45
 [submodule "copasi-dependencies"]
 	path = copasi-dependencies
 	url = https://github.com/COPASI/copasi-dependencies
