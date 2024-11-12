@@ -1,7 +1,7 @@
 name: Build CopasiUI (macOS)
 
 env:
-  copasi_branch: release/Version-4.44
+  copasi_branch: release/Version-4.45
 
 on:
   workflow_dispatch:
