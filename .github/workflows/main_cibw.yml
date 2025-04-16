@@ -5,7 +5,7 @@ env:
   CIBW_ENVIRONMENT: COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies
   CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies
   CIBW_BEFORE_BUILD_LINUX: scripts/install_uuid.sh
-  CIBW_SKIP: "*-musllinux*"
+  CIBW_SKIP: "*-musllinux* cp36-* cp37-* cp38-*"
   CIBW_ARCHS_MACOS: "x86_64 arm64"
 
 on:
@@ -40,6 +40,10 @@ jobs:
       if: matrix.os == 'macos-13'
       shell: bash
       run: brew install gawk
+
+    - name: Add msbuild to PATH (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: ilammy/msvc-dev-cmd@v1
 
     - name: Update COPASI Version
       shell: bash
