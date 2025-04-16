@@ -2,11 +2,12 @@ name: Build Wheels (cibw)
 
 env:
   copasi_branch: release/Version-4.45
-  CIBW_ENVIRONMENT: COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies
-  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies
+  CIBW_ENVIRONMENT: COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies CMAKE_BUILD_TYPE=Release
+  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies CMAKE_BUILD_TYPE=Release
   CIBW_BEFORE_BUILD_LINUX: scripts/install_uuid.sh
   CIBW_SKIP: "*-musllinux* cp36-* cp37-* cp38-* *-win32"
   CIBW_ARCHS_MACOS: "x86_64 arm64"
+  
 
 on:
   workflow_dispatch:
