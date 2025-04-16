@@ -55,8 +55,8 @@ jobs:
 
         # print versions
         python --version
-        swig --version
         cmake --version
+        swig -version
 
     - name: Build wheels
       run: python -m cibuildwheel --output-dir wheelhouse
