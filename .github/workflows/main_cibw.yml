@@ -1,0 +1,94 @@
+name: Build Wheels (cibw)
+
+env:
+  copasi_branch: release/Version-4.45
+  CIBW_ENVIRONMENT: COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies
+  CIBW_BEFORE_BUILD_LINUX: scripts/install_uuid.sh
+  CIBW_SKIP: "*-musllinux*"
+  CIBW_ARCHS_MACOS: "x86_64 arm64"
+
+on:
+  workflow_dispatch:
+  release:
+    types:
+    - published
+    
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-13, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Optional, use if you use setuptools_scm
+        submodules: recursive  # Optional, use if you have submodules
+    
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    
+    - name: restore HEAD
+      shell: bash
+      working-directory: ${{github.workspace}}/copasi_source
+      run: |
+        git checkout ${{ env.copasi_branch }}
+
+    - name: Install gawk on mac
+      if: matrix.os == 'macos-13'
+      shell: bash
+      run: brew install gawk
+
+    - name: Update COPASI Version
+      shell: bash
+      working-directory: ${{github.workspace}}/copasi_source
+      run: ./gitTools/UpdateCopasiVersion
+
+    - name: Copy setup.py
+      run: |
+        cp copasi_source/copasi/bindings/python/setup.py .
+
+    - name: Install cibuildwheel
+      run: |
+        python -m pip install cibuildwheel==2.23.2 swig==4.2.1 cmake==3.31.7
+
+        # print versions
+        python --version
+        swig --version
+        cmake --version
+
+    - name: Build wheels
+      run: python -m cibuildwheel --output-dir wheelhouse
+      # to supply options, put them in 'env', like:
+      # env:
+      #   CIBW_SOME_OPTION: value
+
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        path: wheelhouse/*.whl
+        name: COPASI-${{ matrix.os }}-${{ strategy.job-index }}
+
+  combine_artifacts:
+    name: Combine Artifacts
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: COPASI-*
+          path: dist
+
+      - name: Flatten directory structure
+        run: |
+          find dist -name '*.whl' -exec mv {} dist/ \;
+          rm -rf dist/*/
+
+      - name: Upload combined wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: COPASI-all-wheels
+          path: dist/*.whl
