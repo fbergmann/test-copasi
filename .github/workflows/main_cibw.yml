@@ -53,7 +53,7 @@ jobs:
 
     - name: Copy setup.py
       run: |
-        cp copasi_source/copasi/bindings/python/setup.py .
+        cp scripts/setup.py .
 
     - name: Install cibuildwheel
       run: |
