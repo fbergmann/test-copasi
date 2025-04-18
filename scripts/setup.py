@@ -1,4 +1,3 @@
-
 import errno
 import os
 import sys
@@ -348,5 +347,5 @@ setup(name             = "python-copasi",
       cmdclass={
         'build_ext': CMakeBuild,
       },
-      build_requires=['cmake==3.31.6', 'swig==4.2.1']
+      setup_requires=['cmake==3.31.6', 'swig==4.2.1']
 )
