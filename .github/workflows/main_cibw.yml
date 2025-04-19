@@ -116,6 +116,7 @@ jobs:
       shell: bash
       run: |
         ls -la
+        mv python-copasi-*/* .
         tar zxf python_copasi-*.tar.gz
         mv python_copasi-*/* .
         rm -rf python_copasi-*
