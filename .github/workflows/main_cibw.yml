@@ -109,7 +109,7 @@ jobs:
     - name: Download sdist
       uses: actions/download-artifact@v4
       with:
-        name: python-copasi-${{ env.COPASI_VERSION }}-sdist
+        pattern: python-copasi-*-sdist
         path: .
 
     - name: Unpack sdist
