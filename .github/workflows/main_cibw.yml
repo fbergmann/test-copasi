@@ -16,7 +16,74 @@ on:
     - published
     
 jobs:
+
+  make_sdist:
+    name: Make SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Optional, use if you use setuptools_scm
+          submodules: recursive  # Optional, use if you have submodules
+    
+      - name: restore HEAD
+        shell: bash
+        working-directory: ${{github.workspace}}/copasi_source
+        run: |
+          git checkout ${{ env.copasi_branch }}
+
+      - name: Update COPASI Version
+        shell: bash
+        working-directory: ${{github.workspace}}/copasi_source
+        run: |
+          ./gitTools/UpdateCopasiVersion
+          # extract ./CopasiVersion.h
+
+          AWK=${COPASI_AWK:-gawk}
+
+          major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "./copasi/CopasiVersion.h"`
+          minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "./copasi/CopasiVersion.h"`
+          build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "./copasi/CopasiVersion.h"`
+          modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "./copasi/CopasiVersion.h"`
+          comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "./copasi/CopasiVersion.h"`
+          buildname=${build}
+          
+          if [ $modified == true ]; then
+            buildname=${buildname}+
+          fi
+
+          COPASI_VERSION=${major}.${minor}.${build}
+          echo "COPASI_VERSION_ONLY=$COPASI_VERSION" >> $GITHUB_ENV
+
+          if [ x"${comment}" = x\"Snapshot\" ]; then
+            COPASI_VERSION=${major}.
+            [ ${#minor} = 1 ] && COPASI_VERSION=${COPASI_VERSION}0
+            COPASI_VERSION=${COPASI_VERSION}${minor}.
+            [ ${#build} = 1 ] && COPASI_VERSION=${COPASI_VERSION}0
+            COPASI_VERSION=${COPASI_VERSION}${build}
+          fi
+
+          export COPASI_VERSION=$COPASI_VERSION
+          echo "COPASI_VERSION=$COPASI_VERSION" >> $GITHUB_ENV
+
+      - name: Copy setup.py
+        run: |
+          cp scripts/setup.py .
+          cp copasi_source/copasi/bindings/python/MANIFEST.in .
+
+
+      - name: Build SDist
+        run: |
+          pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: ./dist/*.tar.gz
+          name: python-copasi-${{ env.COPASI_VERSION }}-sdist
+    
+
   build_wheels:
+    needs: [make_sdist]
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -24,36 +91,11 @@ jobs:
         os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-13, macos-latest]
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Optional, use if you use setuptools_scm
-        submodules: recursive  # Optional, use if you have submodules
-    
     - uses: seanmiddleditch/gha-setup-ninja@master
     
-    - name: restore HEAD
-      shell: bash
-      working-directory: ${{github.workspace}}/copasi_source
-      run: |
-        git checkout ${{ env.copasi_branch }}
-
-    - name: Install gawk on mac
-      if: matrix.os == 'macos-13'
-      shell: bash
-      run: brew install gawk
-
     - name: Add msbuild to PATH (Windows)
       if: matrix.os == 'windows-latest'
       uses: ilammy/msvc-dev-cmd@v1
-
-    - name: Update COPASI Version
-      shell: bash
-      working-directory: ${{github.workspace}}/copasi_source
-      run: ./gitTools/UpdateCopasiVersion
-
-    - name: Copy setup.py
-      run: |
-        cp scripts/setup.py .
 
     - name: Install cibuildwheel
       run: |
@@ -63,6 +105,21 @@ jobs:
         python --version
         cmake --version
         swig -version
+
+    - name: Download sdist
+      uses: actions/download-artifact@v4
+      with:
+        name: python-copasi-${{ env.COPASI_VERSION }}-sdist
+        path: .
+
+    - name: Unpack sdist
+      shell: bash
+      run: |
+        ls -la
+        tar zxf python_copasi-*.tar.gz
+        mv python_copasi-*/* .
+        rm -rf python_copasi-*
+        ls -la
 
     - name: Build wheels
       run: python -m cibuildwheel --output-dir wheelhouse
