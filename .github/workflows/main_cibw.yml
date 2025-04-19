@@ -2,13 +2,11 @@ name: Build Wheels (cibw)
 
 env:
   copasi_branch: release/Version-4.45
-  CIBW_ENVIRONMENT: COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies CMAKE_BUILD_TYPE=Release
-  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja COPASI_SRC_DIR=copasi_source COPASI_DEP_DIR=copasi-dependencies COPASI_DEP_SRC=copasi-dependencies CMAKE_BUILD_TYPE=Release
-  CIBW_BEFORE_BUILD_LINUX: scripts/install_uuid.sh
+  CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
+  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
   CIBW_SKIP: "*-musllinux* cp36-* cp37-* cp38-* *-win32"
   CIBW_ARCHS_MACOS: "x86_64 arm64"
   
-
 on:
   workflow_dispatch:
   release:
@@ -89,6 +87,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-13, macos-latest]
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
     - uses: seanmiddleditch/gha-setup-ninja@master
@@ -124,10 +123,10 @@ jobs:
         ls -la
 
     - name: Build wheels
-      run: python -m cibuildwheel --output-dir wheelhouse
-      # to supply options, put them in 'env', like:
-      # env:
-      #   CIBW_SOME_OPTION: value
+      env:
+        CIBW_BUILD: ${{ matrix.python }}
+      run: |
+        python -m cibuildwheel --output-dir wheelhouse
 
 
     - name: Upload wheels
