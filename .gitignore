@@ -12,3 +12,4 @@ libuuid-1.0.3.tar.gz
 .vscode/settings.json
 MANIFEST.in
 .DS_Store
+.eggs
