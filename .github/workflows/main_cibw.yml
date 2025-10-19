@@ -5,7 +5,7 @@ env:
   CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
   CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
   CIBW_SKIP: "*-musllinux*  *-win32"
-  CIBW_ARCHS_MACOS: "x86_64 arm64"
+  #CIBW_ARCHS_MACOS: "x86_64 arm64"
   
 on:
   workflow_dispatch:
@@ -68,6 +68,7 @@ jobs:
         run: |
           cp scripts/setup.py .
           cp copasi_source/copasi/bindings/python/MANIFEST.in .
+          cp scripts/CMakeLists.txt copasi_source/
 
 
       - name: Build SDist
