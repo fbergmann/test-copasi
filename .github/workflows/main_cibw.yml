@@ -4,7 +4,7 @@ env:
   copasi_branch: release/Version-4.46
   CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
   CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release CMAKE_C_COMPILER=cl.exe CMAKE_CXX_COMPILER=cl.exe
-
+  CIBW_BEFORE_BUILD_WINDOWS_ARM64: call "C:\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat" amd64_arm64
   CIBW_SKIP: "*-musllinux*  *-win32"
   #CIBW_ARCHS_MACOS: "x86_64 arm64"
   
