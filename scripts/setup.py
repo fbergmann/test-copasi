@@ -270,6 +270,8 @@ class CMakeBuild(build_ext):
         else:
           lib_path = get_win_python_lib()
           if lib_path is not None:
+            print ('python library: {0}'.format(lib_path))
+            print ('python include: {0}'.format(get_python_include()))
             copasi_args.append('-DPYTHON_LIBRARY={0}'.format(lib_path))
 
         if not is_win and not is_osx:
