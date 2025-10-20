@@ -95,10 +95,10 @@ jobs:
     - uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Add msbuild to PATH (Windows)
-      if: matrix.os == 'windows-11-arm'
+      if: matrix.os == 'windows-latest'
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Add msbuild to PATH (Windows)
+    - name: Add msbuild to PATH (Windows ARM)
       if: matrix.os == 'windows-11-arm'
       uses: ilammy/msvc-dev-cmd@v1
       with:
