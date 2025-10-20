@@ -3,10 +3,7 @@ name: Build Wheels (cibw)
 env:
   copasi_branch: release/Version-4.46
   CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
-  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR="NMake Makefiles" CMAKE_BUILD_TYPE=Release
-  #CIBW_BEFORE_BUILD_WINDOWS_ARM64: call "C:\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat" amd64_arm64
-  CIBW_BEFORE_BUILD_WINDOWS_ARM64: call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" amd64_arm64
-  CIBW_BEFORE_ALL_WINDOWS_ARM64: call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" amd64_arm64
+  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
   CIBW_SKIP: "*-musllinux*  *-win32"
   #CIBW_ARCHS_MACOS: "x86_64 arm64"
   
@@ -98,7 +95,7 @@ jobs:
     - uses: seanmiddleditch/gha-setup-ninja@master
     
     - name: Add msbuild to PATH (Windows)
-      if: matrix.os == 'windows-latest'
+      if: matrix.os == 'windows-latest' || matrix.os == 'windows-11-arm'
       uses: ilammy/msvc-dev-cmd@v1
 
 
