@@ -183,6 +183,8 @@ class CMakeBuild(build_ext):
         is_win = platform.system() == 'Windows'
         is_win_32 = is_win and ('win32' in name or 'win32' in build_temp)
         enable_jit = 'ON' if ('_64' in suffix or 'amd64' in suffix) else 'OFF'
+        if 'arm64' in suffix:
+            enable_jit = 'OFF'
         enable_clapack = 'OFF' if is_osx else 'ON'
 
         cmake_args = [
