@@ -1,3 +1,4 @@
+
 import errno
 import os
 import sys
@@ -17,7 +18,7 @@ def prepend_variables(args, variables):
       if var == 'CMAKE_GENERATOR':
         args = ['-G', temp] + args
       else:
-        args.insert(0, '-D' + var + '=' +temp)
+        args.insert(0, '-D' + var + '=' + temp)
   return args
 
 def get_python_include():
@@ -182,8 +183,10 @@ class CMakeBuild(build_ext):
         is_osx = platform.system() == 'Darwin'
         is_win = platform.system() == 'Windows'
         is_win_32 = is_win and ('win32' in name or 'win32' in build_temp)
-        enable_jit = 'ON' if ('_64' in suffix or 'amd64' in suffix) else 'OFF'
-        if 'arm64' in suffix:
+        enable_jit = os.getenv('ENABLE_JIT')
+        if enable_jit is None:
+          enable_jit = 'ON' if ('_64' in suffix or 'amd64' in suffix) else 'OFF'
+          if 'arm64' in suffix:
             enable_jit = 'OFF'
         enable_clapack = 'OFF' if is_osx else 'ON'
 
@@ -238,7 +241,7 @@ class CMakeBuild(build_ext):
                              '-DBUILD_archive=OFF',
                              '-DBUILD_NativeJIT=' + enable_jit,
                              '-DBUILD_clapack=' + enable_clapack,
-                             '-DBUILD_uuid=ON'
+                             '-DBUILD_uuid=OFF'
                            ]
                          )
                self.spawn(['cmake', '--build', '.'] + build_args)
@@ -318,6 +321,10 @@ class CMakeBuild(build_ext):
                   pyd_file = join(root, name)
                   print('copying pyd file to output file')
                   shutil.copyfile(pyd_file, target_lib_path)
+                  # look if a pdb file also exists and copy it
+                  pdb_file = join(root, name.replace('.pyd', '.pdb'))
+                  if exists(pdb_file):
+                    shutil.copyfile(pdb_file, target_lib_path.replace('.pyd', '.pdb'))
                 # 2. get scripts and copy to target_lib_path.parent.__init__.py corresponding to version 
                 if name == 'COPASI.py':
                   src_file = join(root, name)

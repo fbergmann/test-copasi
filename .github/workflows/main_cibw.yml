@@ -9,6 +9,15 @@ env:
   
 on:
   workflow_dispatch:
+    inputs:
+      cibw_environment:
+        description: 'Override for CIBW_ENVIRONMENT'
+        required: false
+        default: 'CMAKE_BUILD_TYPE=Release'
+      cibw_environment_windows:
+        description: 'Override for CIBW_ENVIRONMENT_WINDOWS'
+        required: false
+        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release'
   release:
     types:
     - published
@@ -139,6 +148,9 @@ jobs:
     - name: Build wheels
       env:
         CIBW_BUILD: ${{ matrix.python_version }}
+        CIBW_ENVIRONMENT: ${{ inputs.cibw_environment || env.CIBW_ENVIRONMENT }}
+        CIBW_ENVIRONMENT_WINDOWS: ${{ inputs.cibw_environment_windows || env.CIBW_ENVIRONMENT_WINDOWS }}
+
       run: |
         python -m cibuildwheel --output-dir wheelhouse
 

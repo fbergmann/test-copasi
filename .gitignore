@@ -13,3 +13,4 @@ libuuid-1.0.3.tar.gz
 MANIFEST.in
 .DS_Store
 .eggs
+/*env*/
