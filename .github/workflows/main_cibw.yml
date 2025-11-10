@@ -3,7 +3,8 @@ name: Build Wheels (cibw)
 env:
   copasi_branch: release/Version-4.46
   CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
-  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
+  #CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
+  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo
   CIBW_SKIP: "*-musllinux*  *-win32"
   #CIBW_ARCHS_MACOS: "x86_64 arm64"
   
@@ -17,11 +18,12 @@ on:
       cibw_environment_windows:
         description: 'Override for CIBW_ENVIRONMENT_WINDOWS'
         required: false
-        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release'
+        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo'
       cibw_skip:
         description: 'Override for CIBW_SKIP'
         required: false
         default: '*-musllinux*  *-win32'
+        
   release:
     types:
     - published
@@ -101,8 +103,10 @@ jobs:
     strategy:
       matrix:
         # macos-15-intel is an Intel runner, macos-14 is Apple silicon
-        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, windows-11-arm, macos-15-intel, macos-14]
-        python_version: ['cp39-*', 'cp310-*', 'cp311-*', 'cp312-*', 'cp313-*', 'cp314-*']
+        #os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, windows-11-arm, macos-15-intel, macos-14]        
+        #python_version: ['cp39-*', 'cp310-*', 'cp311-*', 'cp312-*', 'cp313-*', 'cp314-*']
+        os: [windows-latest]
+        python_version: ['cp312-*']
 
     steps:
     - uses: seanmiddleditch/gha-setup-ninja@master
