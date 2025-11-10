@@ -18,7 +18,7 @@ on:
       cibw_environment_windows:
         description: 'Override for CIBW_ENVIRONMENT_WINDOWS'
         required: false
-        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo
+        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo'
       cibw_skip:
         description: 'Override for CIBW_SKIP'
         required: false
