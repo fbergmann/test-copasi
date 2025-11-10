@@ -4,7 +4,7 @@ env:
   copasi_branch: release/Version-4.46
   CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
   #CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
-  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo ENABLE_JIT=OFF
+  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo
   CIBW_SKIP: "*-musllinux*  *-win32"
   #CIBW_ARCHS_MACOS: "x86_64 arm64"
   
@@ -18,7 +18,7 @@ on:
       cibw_environment_windows:
         description: 'Override for CIBW_ENVIRONMENT_WINDOWS'
         required: false
-        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo ENABLE_JIT=OFF'
+        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=RelWithDebInfo
       cibw_skip:
         description: 'Override for CIBW_SKIP'
         required: false
@@ -153,6 +153,15 @@ jobs:
         rm -rf python_copasi-*
         ls -la
 
+    - name: store python version in environment variable
+      shell: bash
+      run: |
+        # store major.minor_arch in CURRENT_PYTHON_VERSION
+        major=$(python -c "import sys; print(sys.version_info.major)")
+        minor=$(python -c "import sys; print(sys.version_info.minor)")        
+        arch=$(python -c "import platform; print(platform.machine())")
+        echo CURRENT_PYTHON_VERSION=${major}.${minor}_${arch} >> $GITHUB_ENV
+
     - name: Build wheels
       env:
         CIBW_BUILD: ${{ matrix.python_version }}
@@ -168,7 +177,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         path: wheelhouse/*.whl
-        name: COPASI-${{ matrix.os }}-${{ strategy.job-index }}
+        name: COPASI-${{ matrix.os }}-${{ env.CURRENT_PYTHON_VERSION }}-${{ strategy.job-index }}
 
   combine_artifacts:
     name: Combine Artifacts
