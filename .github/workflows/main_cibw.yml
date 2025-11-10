@@ -18,6 +18,10 @@ on:
         description: 'Override for CIBW_ENVIRONMENT_WINDOWS'
         required: false
         default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release'
+      cibw_skip:
+        description: 'Override for CIBW_SKIP'
+        required: false
+        default: '*-musllinux*  *-win32'
   release:
     types:
     - published
@@ -150,6 +154,7 @@ jobs:
         CIBW_BUILD: ${{ matrix.python_version }}
         CIBW_ENVIRONMENT: ${{ inputs.cibw_environment || env.CIBW_ENVIRONMENT }}
         CIBW_ENVIRONMENT_WINDOWS: ${{ inputs.cibw_environment_windows || env.CIBW_ENVIRONMENT_WINDOWS }}
+        CIBW_SKIP: ${{ inputs.cibw_skip || env.CIBW_SKIP }}
 
       run: |
         python -m cibuildwheel --output-dir wheelhouse

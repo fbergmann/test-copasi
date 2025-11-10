@@ -241,6 +241,7 @@ class CMakeBuild(build_ext):
                              '-DBUILD_archive=OFF',
                              '-DBUILD_NativeJIT=' + enable_jit,
                              '-DBUILD_clapack=' + enable_clapack,
+                             '-DBUILD_crossguid=OFF',
                              '-DBUILD_uuid=OFF'
                            ]
                          )
