@@ -154,11 +154,8 @@ jobs:
     - name: store python version in environment variable
       shell: bash
       run: |
-        # store major.minor_arch in CURRENT_PYTHON_VERSION
-        major=$(python -c "import sys; print(sys.version_info.major)")
-        minor=$(python -c "import sys; print(sys.version_info.minor)")        
         arch=$(python -c "import platform; print(platform.machine())")
-        echo CURRENT_PYTHON_VERSION=${major}.${minor}_${arch} >> $GITHUB_ENV
+        echo "CURRENT_PYTHON_VERSION=$(python -c 'import re,sys;m=re.search(r\"cp(\\d)(\\d+)-\",sys.argv[1]);print(f\"{m.group(1)}.{m.group(2)}\")' \"${{ matrix.python_version }}\")_${arch}" >> $GITHUB_ENV
 
     - name: Build wheels
       env:
