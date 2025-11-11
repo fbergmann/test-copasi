@@ -98,7 +98,7 @@ jobs:
 
   build_wheels:
     needs: [make_sdist]
-    name: Build ${{ matrix.os }} wheels for '${{ matrix.python }}'
+    name: Build ${{ matrix.os }} wheels for '${{ matrix.python_version }}'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
