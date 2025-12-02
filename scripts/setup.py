@@ -203,7 +203,9 @@ class CMakeBuild(build_ext):
           'CMAKE_LINKER', 
           'CMAKE_GENERATOR',
           'CMAKE_OSX_ARCHITECTURES',
-          'CMAKE_SYSTEM_PROCESSOR'
+          'CMAKE_SYSTEM_PROCESSOR',
+          'CMAKE_OSX_DEPLOYMENT_TARGET',
+          'CMAKE_OSX_SYSROOT'
         ])
 
         if is_win_32:
