@@ -84,9 +84,8 @@ jobs:
 
       - name: Copy setup.py
         run: |
-          cp scripts/setup.py .
+          cp scripts/setup_nlopt.py ./setup.py
           cp copasi_source/copasi/bindings/python/MANIFEST.in .
-          cp scripts/CMakeLists.txt copasi_source/
 
 
       - name: Build SDist
