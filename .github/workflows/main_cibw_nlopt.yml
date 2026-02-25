@@ -1,0 +1,200 @@
+name: Build Wheels (cibw)
+
+env:
+  copasi_branch: release/Version-4.46
+  CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
+  #CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
+  CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
+  CIBW_SKIP: "*-musllinux*  *-win32"
+  #CIBW_ARCHS_MACOS: "x86_64 arm64"
+  
+on:
+  workflow_dispatch:
+    inputs:
+      cibw_environment:
+        description: 'Override for CIBW_ENVIRONMENT'
+        required: false
+        default: 'CMAKE_BUILD_TYPE=Release'
+      cibw_environment_windows:
+        description: 'Override for CIBW_ENVIRONMENT_WINDOWS'
+        required: false
+        default: 'CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release'
+      cibw_skip:
+        description: 'Override for CIBW_SKIP'
+        required: false
+        default: '*-musllinux*  *-win32'
+        
+  release:
+    types:
+    - published
+    
+jobs:
+
+  make_sdist:
+    name: Make SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Optional, use if you use setuptools_scm
+          #submodules: recursive  # Optional, use if you have submodules
+    
+      - name: checkout
+        shell: bash
+        working-directory: ${{github.workspace}}
+        run: |
+          rm -rf copasi_source
+          git clone --branch nlopt --single-branch --depth 1 https://github.com/fbergmann/COPASI_nlopt.git copasi_source
+          rm -rf copasi-dependencies
+          git clone --branch nlopt --single-branch --depth 1 https://github.com/copasi/copasi-dependencies.git copasi-dependencies          
+
+      - name: Update COPASI Version
+        shell: bash
+        working-directory: ${{github.workspace}}/copasi_source
+        run: |
+          ./gitTools/UpdateCopasiVersion
+          # extract ./CopasiVersion.h
+
+          AWK=${COPASI_AWK:-gawk}
+
+          major=`${AWK} -- '$2 ~ "COPASI_VERSION_MAJOR" {print $3}' "./copasi/CopasiVersion.h"`
+          minor=`${AWK} -- '$2 ~ "COPASI_VERSION_MINOR" {print $3}' "./copasi/CopasiVersion.h"`
+          build=`${AWK} -- '$2 ~ "COPASI_VERSION_BUILD" {print $3}' "./copasi/CopasiVersion.h"`
+          modified=`${AWK} -- '$2 ~ "COPASI_VERSION_MODIFIED" {print $3}' "./copasi/CopasiVersion.h"`
+          comment=`${AWK} -- '$2 ~ "COPASI_VERSION_COMMENT" {print $3}' "./copasi/CopasiVersion.h"`
+          buildname=${build}
+          
+          if [ $modified == true ]; then
+            buildname=${buildname}+
+          fi
+
+          COPASI_VERSION=${major}.${minor}.${build}
+          echo "COPASI_VERSION_ONLY=$COPASI_VERSION" >> $GITHUB_ENV
+
+          if [ x"${comment}" = x\"Snapshot\" ]; then
+            COPASI_VERSION=${major}.
+            [ ${#minor} = 1 ] && COPASI_VERSION=${COPASI_VERSION}0
+            COPASI_VERSION=${COPASI_VERSION}${minor}.
+            [ ${#build} = 1 ] && COPASI_VERSION=${COPASI_VERSION}0
+            COPASI_VERSION=${COPASI_VERSION}${build}
+          fi
+
+          export COPASI_VERSION=$COPASI_VERSION
+          echo "COPASI_VERSION=$COPASI_VERSION" >> $GITHUB_ENV
+
+      - name: Copy setup.py
+        run: |
+          cp scripts/setup.py .
+          cp copasi_source/copasi/bindings/python/MANIFEST.in .
+          cp scripts/CMakeLists.txt copasi_source/
+
+
+      - name: Build SDist
+        run: |
+          pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: ./dist/*.tar.gz
+          name: python-copasi-${{ env.COPASI_VERSION }}-sdist
+    
+
+  build_wheels:
+    needs: [make_sdist]
+    name: Build ${{ matrix.os }} wheels for '${{ matrix.python_version }}'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # macos-15-intel is an Intel runner, macos-14 is Apple silicon
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, windows-11-arm, macos-15-intel, macos-14]        
+        python_version: ['cp39-*', 'cp310-*', 'cp311-*', 'cp312-*', 'cp313-*', 'cp314-*']
+
+    steps:
+    - uses: seanmiddleditch/gha-setup-ninja@master
+
+    - name: Add msbuild to PATH (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Add msbuild to PATH (Windows ARM)
+      if: matrix.os == 'windows-11-arm'
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_arm64
+
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install cibuildwheel
+      shell: bash
+      run: |
+        python -m pip install cibuildwheel==3.2.1 swig==4.2.1 cmake==3.31.6
+
+        # print versions
+        python --version
+        cmake --version
+        swig -version
+
+    - name: Download sdist
+      uses: actions/download-artifact@v4
+      with:
+        pattern: python-copasi-*-sdist
+        path: .
+
+    - name: Unpack sdist
+      shell: bash
+      run: |
+        ls -la
+        mv python-copasi-*/* .
+        ls -la
+        tar zxf python_copasi-*.tar.gz
+        mv python_copasi-*/* .
+        rm -rf python_copasi-*
+        ls -la
+
+    - name: store python version in environment variable
+      shell: bash
+      run: |
+        arch=$(python -c "import platform; print(platform.machine())")
+        echo "CURRENT_PYTHON_VERSION=$(python -c 'import re,sys;m=re.search(r\"cp(\\d)(\\d+)-\",sys.argv[1]);print(f\"{m.group(1)}.{m.group(2)}\")' \"${{ matrix.python_version }}\")_${arch}" >> $GITHUB_ENV
+
+    - name: Build wheels
+      env:
+        CIBW_BUILD: ${{ matrix.python_version }}
+        CIBW_ENVIRONMENT: ${{ inputs.cibw_environment || env.CIBW_ENVIRONMENT }}
+        CIBW_ENVIRONMENT_WINDOWS: ${{ inputs.cibw_environment_windows || env.CIBW_ENVIRONMENT_WINDOWS }}
+        CIBW_SKIP: ${{ inputs.cibw_skip || env.CIBW_SKIP }}
+
+      run: |
+        python -m cibuildwheel --output-dir wheelhouse
+
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        path: wheelhouse/*.whl
+        name: COPASI-${{ matrix.os }}-py${{ env.CURRENT_PYTHON_VERSION }}-${{ strategy.job-index }}
+
+  combine_artifacts:
+    name: Combine Artifacts
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: COPASI-*
+          path: dist
+
+      - name: Flatten directory structure
+        run: |
+          find dist -name '*.whl' -exec mv {} dist/ \;
+          rm -rf dist/*/
+
+      - name: Upload combined wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: COPASI-all-wheels
+          path: dist/*.whl
