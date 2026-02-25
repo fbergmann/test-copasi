@@ -255,6 +255,7 @@ class CMakeBuild(build_ext):
             '-DBUILD_GUI=OFF',
             '-DENABLE_PYTHON=ON',
             '-DCOPASI_USE_NLOPT=ON',
+            '-DCOPASI_OVERRIDE_VERSION=4.47.300',
             '-DPYTHON_EXECUTABLE=' + sys.executable,
             '-DPYTHON_INCLUDE_DIR=' + get_python_include(),
             '-DENABLE_JIT=' + enable_jit
