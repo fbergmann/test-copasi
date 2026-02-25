@@ -1,4 +1,4 @@
-name: Build Wheels (cibw)
+name: Build Wheels (NLOPT cibw)
 
 env:
   copasi_branch: release/Version-4.46
