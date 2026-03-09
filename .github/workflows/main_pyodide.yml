@@ -121,6 +121,7 @@ jobs:
     - name: Build wheels
       env:
         CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
+        CIBW_PYODIDE_BUILD_FRONTEND: '{"name": "build", "args": ["--exports", "whole_archive"]}'
         CIBW_PLATFORM: pyodide
         CIBW_BEFORE_BUILD: 'pip install swig==4.4.1'        
 
