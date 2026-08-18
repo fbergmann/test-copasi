@@ -84,6 +84,8 @@ jobs:
           cp scripts/setup.py .
           cp copasi_source/copasi/bindings/python/MANIFEST.in .
           cp scripts/CMakeLists.txt copasi_source/
+          cd copasi_source
+          git apply ../scripts/patch-447.patch
 
 
       - name: Build SDist
