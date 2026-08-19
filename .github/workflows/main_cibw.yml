@@ -7,6 +7,14 @@ env:
   CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
   CIBW_SKIP: "*-musllinux*  *-win32"
   #CIBW_ARCHS_MACOS: "x86_64 arm64"
+  # After building each wheel, cibuildwheel installs it into a fresh venv and runs these hooks
+  # to smoke-test it against basico: clone basico, install its deps (before-test),
+  # then (after cibuildwheel installs the just-built wheel + CIBW_TEST_REQUIRES) run its pytest suite.
+  CIBW_TEST_REQUIRES: pytest
+  CIBW_BEFORE_TEST: >
+    git clone --depth 1 https://github.com/copasi/basico.git {project}/basico_test &&
+    python -m pip install -r {project}/basico_test/requirements.txt
+  CIBW_TEST_COMMAND: cd {project}/basico_test && python -m pytest tests
   
 on:
   workflow_dispatch:
