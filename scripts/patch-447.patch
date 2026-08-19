@@ -49,3 +49,194 @@ index dcd4cff94..47a6ae63d 100644
  %include "copasi/utilities/CTaskEnum.h"
  %include "copasi/utilities/CCopasiTask.h"
  
+diff --git a/copasi/bindings/swig/CEvent.i b/copasi/bindings/swig/CEvent.i
+index ef956ce6a..516a58ed6 100644
+--- a/copasi/bindings/swig/CEvent.i
++++ b/copasi/bindings/swig/CEvent.i
+@@ -127,6 +127,19 @@ typedef CExpression DisownedExpression;
+ 
+ %extend CEvent
+ {
++
++  CEventAssignment* createAssignment(CCommonName& targetCN)
++  {
++    CEventAssignment* pAssignment=new CEventAssignment(targetCN);
++
++    if (!$self->getAssignments().add(pAssignment,true))
++      {
++        delete pAssignment;
++        pAssignment = NULL;
++      }
++     return pAssignment;
++  }
++
+   CEventAssignment* createAssignment(std::string targetCN = "")
+   {
+     CEventAssignment* pAssignment=new CEventAssignment(targetCN);
+diff --git a/copasi/bindings/swig/CExperimentObjectMap.i b/copasi/bindings/swig/CExperimentObjectMap.i
+index e822db337..13e0754c5 100644
+--- a/copasi/bindings/swig/CExperimentObjectMap.i
++++ b/copasi/bindings/swig/CExperimentObjectMap.i
+@@ -25,6 +25,23 @@
+ 
+ %}
+ 
++%extend CExperimentObjectMap
++{
++    bool setObjectCN(const size_t & index,
++                    const std::string & CN)
++    {
++
++        return $self->setObjectCN(index, CRegisteredCommonName(CN));
++    }
++
++    bool setObjectCN(const size_t & index,
++                    const CCommonName & CN)
++    {
++
++        return $self->setObjectCN(index, CRegisteredCommonName(CN));
++    }
++}
++
+ // suppress warnings on nested structures
+ %warnfilter(325) CDataColumn;
+ 
+diff --git a/copasi/bindings/swig/CFitProblem.i b/copasi/bindings/swig/CFitProblem.i
+index 2e6a74f98..6641b3a91 100644
+--- a/copasi/bindings/swig/CFitProblem.i
++++ b/copasi/bindings/swig/CFitProblem.i
+@@ -24,6 +24,29 @@
+ 
+ %}
+ 
++%extend CFitProblem
++{
++  CFitItem & addFitItem(const CCommonName & objectCN)
++  {
++    return $self->addFitItem(CRegisteredCommonName(objectCN));
++  }
++  
++  CFitItem & addFitItem(const std::string & objectCN)
++  {
++    return $self->addFitItem(CRegisteredCommonName(objectCN));
++  }
++
++  CFitConstraint& addFitConstraint(const CCommonName & objectCN)
++  {
++    return $self->addFitConstraint(CRegisteredCommonName(objectCN));
++  }
++
++  CFitConstraint& addFitConstraint(const std::string & objectCN)
++  {
++    return $self->addFitConstraint(CRegisteredCommonName(objectCN));
++  }
++}
++
+ %rename (output) CFitProblem::print;
+ //%ignore CFitProblem::setCallBack;
+ %ignore CFitProblem::getExperimentSet() const;
+diff --git a/copasi/bindings/swig/CModelParameter.i b/copasi/bindings/swig/CModelParameter.i
+index c9d76fd7f..ce713d465 100644
+--- a/copasi/bindings/swig/CModelParameter.i
++++ b/copasi/bindings/swig/CModelParameter.i
+@@ -94,9 +94,32 @@
+ 	return !(value != value);
+   }
+ 
++  void setCN(const std::string & cn)
++  {
++    $self->setCN(CRegisteredCommonName(cn));
++  }
++
++  void setCN(const CCommonName & cn)
++  {
++    $self->setCN(CRegisteredCommonName(cn));
++  }
+   
+ }
+ 
++%extend CModelParameterSpecies
++{
++
++  void setCN(const std::string & cn)
++  {
++    $self->setCN(CRegisteredCommonName(cn));
++  }
++
++  void setCN(const CCommonName & cn)
++  {
++    $self->setCN(CRegisteredCommonName(cn));
++  }
++}
++
+ %include "model/CModelParameter.h"
+ 
+ 
+diff --git a/copasi/bindings/swig/CModelParameterGroup.i b/copasi/bindings/swig/CModelParameterGroup.i
+index ee37e3147..874afe322 100644
+--- a/copasi/bindings/swig/CModelParameterGroup.i
++++ b/copasi/bindings/swig/CModelParameterGroup.i
+@@ -22,6 +22,13 @@
+ 
+ %}
+ 
++%extend CModelParameterGroup
++{
++  CModelParameter * getModelParameter(const CCommonName & cn) const
++  {
++	return $self->CModelParameterGroup::getModelParameter(cn);
++  }
++}
+ 
+ %include "model/CModelParameterGroup.h"
+ 
+diff --git a/copasi/bindings/swig/CModelParameterSet.i b/copasi/bindings/swig/CModelParameterSet.i
+index 0a9458d2d..7580c9978 100644
+--- a/copasi/bindings/swig/CModelParameterSet.i
++++ b/copasi/bindings/swig/CModelParameterSet.i
+@@ -138,6 +138,11 @@
+ 	return $self->CModelParameterGroup::getModelParameter(cn);
+   }
+    
++  CModelParameter * getModelParameter(const CCommonName & cn) const
++  {
++	return $self->CModelParameterGroup::getModelParameter(cn);
++  }
++
+     /**
+    * Retrieve a pointer to the parameter with the given name and type
+    * @param const std::string & name
+diff --git a/copasi/bindings/swig/COptProblem.i b/copasi/bindings/swig/COptProblem.i
+index d2e0dbdae..47f50bbec 100644
+--- a/copasi/bindings/swig/COptProblem.i
++++ b/copasi/bindings/swig/COptProblem.i
+@@ -28,6 +28,29 @@
+ 
+ %}
+ 
++%extend COptProblem
++{
++  COptItem & addOptItem(const CCommonName & objectCN)
++  {
++    return $self->addOptItem(CRegisteredCommonName(objectCN));
++  }
++  
++  COptItem & addOptItem(const std::string & objectCN)
++  {
++    return $self->addOptItem(CRegisteredCommonName(objectCN));
++  }
++
++  COptItem& addOptConstraint(const CCommonName & objectCN)
++  {
++    return $self->addOptConstraint(CRegisteredCommonName(objectCN));
++  }
++
++  COptItem& addOptConstraint(const std::string & objectCN)
++  {
++    return $self->addOptConstraint(CRegisteredCommonName(objectCN));
++  }
++}
++
+ typedef std::vector<COptItem*> OptItemStdVector;
+ 
+ %ignore operator<<(std::ostream& os, const COptProblem& o);
