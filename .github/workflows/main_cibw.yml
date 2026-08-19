@@ -20,6 +20,12 @@ env:
     git clone --depth 1 https://github.com/copasi/basico.git {project}/basico_test &&
     python -m pip install -r {project}/basico_test/requirements.txt
   CIBW_TEST_COMMAND_LINUX: cd {project}/basico_test && python -m pytest tests
+  CIBW_TEST_REQUIRES_WINDOWS: pytest
+  CIBW_BEFORE_TEST_WINDOWS: >
+    git clone --depth 1 https://github.com/copasi/basico.git {project}\basico_test &&
+    python -m pip install -r {project}/basico_test/requirements.txt
+  CIBW_TEST_COMMAND_WINDOWS: cd {project}\basico_test && python -m pytest tests
+
 on:
   workflow_dispatch:
     inputs:
