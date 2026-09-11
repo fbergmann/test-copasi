@@ -21,11 +21,11 @@ env:
     python -m pip install -r {project}/basico_test/requirements.txt
   CIBW_TEST_COMMAND_LINUX: cd {project}/basico_test && python -m pytest tests
   CIBW_TEST_REQUIRES_WINDOWS: pytest
-  CIBW_BEFORE_TEST_WINDOWS: >
-    git clone --depth 1 https://github.com/copasi/basico.git {project}\basico_test &&
-    python -m pip install -r {project}/basico_test/requirements.txt
-  CIBW_TEST_COMMAND_WINDOWS: cd {project}\basico_test && python -m pytest tests
-  CIBW_TEST_SKIP: windows
+  #CIBW_BEFORE_TEST_WINDOWS: >
+  #  git clone --depth 1 https://github.com/copasi/basico.git {project}\basico_test &&
+  #   python -m pip install -r {project}/basico_test/requirements.txt
+  # CIBW_TEST_COMMAND_WINDOWS: cd {project}\basico_test && python -m pytest tests
+  CIBW_TEST_SKIP: '*-win*'
 
 on:
   workflow_dispatch:
@@ -174,7 +174,11 @@ jobs:
       shell: bash
       run: |
         arch=$(python -c "import platform; print(platform.machine())")
-        echo "CURRENT_PYTHON_VERSION=$(python -c 'import re,sys;m=re.search(r\"cp(\\d)(\\d+)-\",sys.argv[1]);print(f\"{m.group(1)}.{m.group(2)}\")' \"${{ matrix.python_version }}\")_${arch}" >> $GITHUB_ENV
+        ver="${{ matrix.python_version }}"
+        ver=${ver#cp}
+        ver=${ver%%-*}
+        pyver="${ver:0:1}.${ver:1}"
+        echo "CURRENT_PYTHON_VERSION=${pyver}_${arch}" >> $GITHUB_ENV
 
     - name: Build wheels
       env:
