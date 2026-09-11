@@ -1,7 +1,7 @@
 name: Build Wheels (cibw, pyodide)
 
 env:
-  copasi_branch: release/Version-4.47
+  copasi_branch: release/Version-4.48
   CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
   CIBW_SKIP: "*-musllinux*  *-win32"
   
