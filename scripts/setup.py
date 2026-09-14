@@ -267,6 +267,7 @@ class CMakeBuild(build_ext):
             '-DF2C_LOGICAL=int',
             '-DDISABLE_CORE_OBJECT_LIBRARY=ON',
             '-DCOPASI_USE_RAPTOR=OFF',
+            '-DCMAKE_CXX_FLAGS=-DSIZEOF_LONG=4 -DSIZEOF_VOID_P=4'
           ]
 
         copasi_args = prepend_variables(copasi_args, [
