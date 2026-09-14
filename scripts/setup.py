@@ -224,6 +224,11 @@ class CMakeBuild(build_ext):
             '--config', config,
             '--'
         ]
+        
+        if 'emscripten' in suffix:
+          cmake_args += [                                      
+            '-DCMAKE_CXX_FLAGS=-DSIZEOF_LONG=4 -DSIZEOF_VOID_P=4'
+          ]
 
         global DEP_DIR
         if DEP_DIR and exists(DEP_DIR) and not self.dry_run:
