@@ -227,7 +227,7 @@ class CMakeBuild(build_ext):
         
         if 'emscripten' in suffix:
           cmake_args += [                                      
-            '-DCMAKE_CXX_FLAGS=-DSIZEOF_LONG=4 -DSIZEOF_VOID_P=4'
+            '-DCMAKE_CXX_FLAGS=-DSIZEOF_LONG=4 -DSIZEOF_VOID_P=4 -DLONG_BIT=32'
           ]
 
         global DEP_DIR
@@ -272,7 +272,7 @@ class CMakeBuild(build_ext):
             '-DF2C_LOGICAL=int',
             '-DDISABLE_CORE_OBJECT_LIBRARY=ON',
             '-DCOPASI_USE_RAPTOR=OFF',
-            '-DCMAKE_CXX_FLAGS=-DSIZEOF_LONG=4 -DSIZEOF_VOID_P=4'
+            '-DCMAKE_CXX_FLAGS=-DSIZEOF_LONG=4 -DSIZEOF_VOID_P=4 -DLONG_BIT=32'
           ]
 
         copasi_args = prepend_variables(copasi_args, [
