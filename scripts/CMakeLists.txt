@@ -142,6 +142,7 @@ endif()
 CHECK_FUNCTION_EXISTS(strptime HAVE_STRPTIME)
 
 CHECK_TYPE_SIZE("void*"  CMAKE_SIZEOF_VOID_P)
+CHECK_TYPE_SIZE("long"  CMAKE_SIZEOF_LONG)
 
 CHECK_TYPE_SIZE("unsigned int"  CMAKE_SIZEOF_UINT)
 CHECK_TYPE_SIZE("size_t"  CMAKE_SIZEOF_SIZE_T)
@@ -1131,6 +1132,13 @@ message(STATUS "-----------------------------------------------------------
 
    CXX Flags                = ${CMAKE_CXX_FLAGS}
    Additional Defines       = ${DirDefs}
+ 
+  SizeOf: 
+  
+                      long  = ${CMAKE_SIZEOF_LONG}
+                      void* = ${CMAKE_SIZEOF_VOID_P}
+                     size_t = ${CMAKE_SIZEOF_SIZE_T}
+               unsigned int = ${CMAKE_SIZEOF_UINT}
 
   Language Bindings:
 
@@ -1138,15 +1146,17 @@ message(STATUS "-----------------------------------------------------------
    .NET Bindings            = ${ENABLE_CSHARP}
    Java Bindings            = ${ENABLE_JAVA}
    Python Bindings          = ${ENABLE_PYTHON}
-          Python include      = ${PYTHON_INCLUDE_DIR}
-          Python library      = ${PYTHON_LIBRARY}
-          Python version      = ${PYTHON_VERSION}
-          Python executable   = ${PYTHON_EXECUTABLE}
-          Python prefix       = ${PYTHON_PREFIX}
-          Python exec-prefix  = ${PYTHON_EXEC_PREFIX}
-          Python site-packages = ${PYTHON_SITE_PACKAGES}
-          Python version_nodot = ${PYTHON_VERSION_NO_DOT}
-          Python version_major = ${PYTHON_VERSION_MAJOR}
+
+       Python include       = ${PYTHON_INCLUDE_DIR}
+       Python library       = ${PYTHON_LIBRARY}
+       Python version       = ${PYTHON_VERSION}
+       Python executable    = ${PYTHON_EXECUTABLE}
+       Python prefix        = ${PYTHON_PREFIX}
+       Python exec-prefix   = ${PYTHON_EXEC_PREFIX}
+       Python site-packages = ${PYTHON_SITE_PACKAGES}
+       Python version_nodot = ${PYTHON_VERSION_NO_DOT}
+       Python version_major = ${PYTHON_VERSION_MAJOR}
+
    Perl Bindings            = ${ENABLE_PERL}
    Octave Bindings          = ${ENABLE_OCTAVE}
    R Bindings               = ${ENABLE_R}
