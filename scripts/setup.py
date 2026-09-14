@@ -21,16 +21,34 @@ def prepend_variables(args, variables):
         args.insert(0, '-D' + var + '=' + temp)
   return args
 
-def get_python_include():
+def get_python_include(is_emscripten=False):
   temp = os.getenv('PYTHON_INCLUDE_DIR')
   if temp:
-    return temp
+    path = temp
+  else:
+    path = sysconfig.get_paths().get('include')
+    if not path or not exists(path):
+      # for whatever reason 2.7 on centos returns a wrong path here 
+      path = sysconfig.get_config_vars().get('INCLUDEPY')
 
-  path = sysconfig.get_paths()['include']
-  if exists(path): 
-    return path
-  # for whatever reason 2.7 on centos returns a wrong path here 
-  return sysconfig.get_config_vars()['INCLUDEPY']
+  # Automatically patch pyconfig.h if 32-bit wasm sizes are incorrectly set to 8
+  if path and exists(path) and is_emscripten:
+    pyconfig_path = os.path.join(path, 'pyconfig.h')
+    if exists(pyconfig_path):
+      try:
+        with open(pyconfig_path, 'r', encoding='utf-8') as f:
+          content = f.read()
+        
+        updated = content.replace('#define SIZEOF_LONG 8', '#define SIZEOF_LONG 4')
+        updated = updated.replace('#define SIZEOF_VOID_P 8', '#define SIZEOF_VOID_P 4')
+        
+        if updated != content:
+          with open(pyconfig_path, 'w', encoding='utf-8') as f:
+            f.write(updated)
+      except Exception:
+        pass
+
+  return path
 
 def get_win_python_lib():
   vars = sysconfig.get_config_vars()
@@ -260,7 +278,7 @@ class CMakeBuild(build_ext):
             '-DBUILD_GUI=OFF',
             '-DENABLE_PYTHON=ON',
             '-DPYTHON_EXECUTABLE=' + sys.executable,
-            '-DPYTHON_INCLUDE_DIR=' + get_python_include(),
+            '-DPYTHON_INCLUDE_DIR=' + get_python_include('emscripten' in suffix),
             '-DENABLE_JIT=' + enable_jit
         ]
 
@@ -286,7 +304,7 @@ class CMakeBuild(build_ext):
           lib_path = get_win_python_lib()
           if lib_path is not None:
             print ('python library: {0}'.format(lib_path))
-            print ('python include: {0}'.format(get_python_include()))
+            print ('python include: {0}'.format(get_python_include('emscripten' in suffix)))
             copasi_args.append('-DPYTHON_LIBRARY={0}'.format(lib_path))
 
         if not is_win and not is_osx:
