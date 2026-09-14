@@ -900,7 +900,7 @@ if (COPASI_EMSCRIPTEN_COMPILE_OPTIONS)
 add_compile_options(${COPASI_EMSCRIPTEN_COMPILE_OPTIONS})
 else()
 # definitely need to compile with exceptions
-add_compile_options(-fexceptions)
+add_compile_options(-fexceptions -DSIZEOF_LONG=4 -DSIZEOF_VOID_P=4 -DLONG_BIT=32)
 endif()
 
 if (COPASI_EMSCRIPTEN_LINK_OPTIONS)
