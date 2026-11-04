@@ -1,7 +1,7 @@
 name: Build Wheels (cibw)
 
 env:
-  copasi_branch: release/Version-4.48
+  copasi_branch: release/Version-4.49
   CIBW_ENVIRONMENT: CMAKE_BUILD_TYPE=Release
   #CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
   CIBW_ENVIRONMENT_WINDOWS: CMAKE_GENERATOR=Ninja CMAKE_BUILD_TYPE=Release
